@@ -20,7 +20,7 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     
     
     @IBOutlet weak var tableView: UITableView!
-    let section = ["History","Collaborators"];
+    let section = ["History"];
     
     
 
@@ -35,13 +35,20 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
-        return 0;
+        return  task.historyCollabs.count;
     }
     
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell:UITableViewCell=UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: "mycell")
-    
+        let cellIdentifier = "detailsTableViewCell"
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? detailsTableViewCell
+            else{fatalError("Dequeued cell reallocation didnt work")}
+       
+        cell.historyDate.text = "is history" // Assign currently editing taskName to the TaskName UItextfield
+        
+        print(cell);
+        
+        
         return cell
     }
     

@@ -67,7 +67,6 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="TaskDate" destination="amG-0f-Qje" id="zcI-v5-oxm"/>
                                             <outlet property="historyDate" destination="amG-0f-Qje" id="0lk-bc-Hlw"/>
                                             <outlet property="taskHistory" destination="ixV-81-Hrp" id="Hfo-b5-y2z"/>
                                         </connections>

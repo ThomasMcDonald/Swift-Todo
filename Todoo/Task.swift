@@ -22,7 +22,7 @@ class Task{
     var dueDate: String;
     var taskCompleted: Bool;
     var history: [String: String] = ["date":"", "comments":""];
-   
+    
     
     
     
