@@ -22,7 +22,7 @@ class Task{
     var dueDate: String;
     var taskCompleted: Bool;
     var history: [String: String] = ["date":"", "comments":""];
-    
+    var data:Array<Any>
     
     
     
@@ -40,6 +40,7 @@ class Task{
         self.dueDate = dueDate;
         self.taskCompleted = taskCompleted;
         self.history = history;
+        self.data = [self.history, [Collaborators?]()];
     }
     
     

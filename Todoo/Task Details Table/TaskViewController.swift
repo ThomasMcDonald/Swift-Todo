@@ -20,8 +20,8 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     
     
     @IBOutlet weak var tableView: UITableView!
-    let section = ["History"];
-    
+    let section = ["History","Collaborators"];
+    var history: [String: String] = ["date":"", "comments":""];
     
 
     
@@ -35,7 +35,7 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
-        return  task.historyCollabs.count;
+        return  task!.data.count;
     }
     
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -44,9 +44,9 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? detailsTableViewCell
             else{fatalError("Dequeued cell reallocation didnt work")}
        
-        cell.historyDate.text = "is history" // Assign currently editing taskName to the TaskName UItextfield
-        
-        print(cell);
+        cell.historyDate.text = task?.history["date"] // Assign currently editing taskName to the TaskName UItextfield
+        cell.taskHistory.text = task?.history["comments"]
+        print(task?.data[indexPath.section][indexPath.row].date);
         
         
         return cell
@@ -93,8 +93,10 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
             super.prepare(for: segue, sender: sender);
         //These handle the date Picker value and format, converts the datepicker value to a string
         //to view in the table row
-        var date = "05/05/2016" // Sets the initial date to a nil string to prevent error
-      
+        let date = Date()
+        let formatter = DateFormatter() // Sets the initial date to a nil string to prevent error
+        formatter.dateFormat = "dd.MM.yyyy"
+        let result = formatter.string(from: date)
         //////
         
         //Checks for button clicks, if it was the save button continue, continue.
@@ -104,11 +106,22 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
                 return
             }
         
+        
+        let cells = self.tableView.visibleCells as! Array<detailsTableViewCell>
+        
+        for cell in cells {
+            var dict  = ["date":cell.historyDate.text,"comments":cell.taskHistory.text] as [String : Any]
+            history = dict;
+        }
+        
+        print(history);
+        
+        
         let name = TaskName.text ?? "" // make sure TaskName is never Nil
         // If the Datepicker was hidden set the date to an initial value of ``
         //else assign the formattedDate to date
 
-        task = Task(taskName:name,dueDate:date,taskCompleted:false,history: ["date":"11-Apr-2018", "comments":"created"]);
+        task = Task(taskName:name,dueDate:result,taskCompleted:false,history:history as! [String : String]);
     }
     
   
