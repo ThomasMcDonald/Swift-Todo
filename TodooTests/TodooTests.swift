@@ -11,26 +11,23 @@ import XCTest
 
 class TodooTests: XCTestCase {
     
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    /**
+     Confirms that the Task Data returns a Task object when passed valid parameters.
+    */
+    func testTaskDataModalSuccess(){
+        let correctValues = Task.init(taskName: "Task 1", dueDate: "16-Apr-2018")
+        XCTAssertNotNil(correctValues)
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    /**
+     Confirms that the Task Data returns nil when name .
+     */
+    func testTaskDataModalFailure(){
+        // Empty Task Name
+        let emptyTaskName = Task.init(taskName: "", dueDate: "16-Apr-2018")
+        XCTAssertNil(emptyTaskName)
+
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
     
 }
