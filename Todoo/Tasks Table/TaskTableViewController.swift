@@ -14,7 +14,6 @@ class TaskTableViewController: UITableViewController {
 
     var editableTask:Int?; // Keeps track of the task being edited
     var editableSection:Int?;
-    var tasks = [Task?]();
     let section = ["Yet to do", "Completed"];
     var tasksCompleted = 0;
     var tasksinComplete = 0;
@@ -53,10 +52,27 @@ class TaskTableViewController: UITableViewController {
 
    
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        var historyComment = "Moved From Completed to Incomplete";
+        var history = ["date":"","comments":""];
         let movedObject = self.data[sourceIndexPath.section][sourceIndexPath.row]
             data[sourceIndexPath.section].remove(at:sourceIndexPath.row);
             data[destinationIndexPath.section].insert(movedObject, at: destinationIndexPath.row)
-   
+        
+        if(sourceIndexPath.section != destinationIndexPath.section){
+            if(destinationIndexPath.section == 0){
+                 history = ["date":getDate(), "comments":historyComment]
+                data[destinationIndexPath.section][destinationIndexPath.row]?.data.insert(history, at: (data[destinationIndexPath.section][destinationIndexPath.row]?.data.endIndex)!)
+                
+                print(data[destinationIndexPath.section][destinationIndexPath.row]?.data ?? "Default value means its failed");
+            }
+            else{
+                historyComment = "Moved From InComplete to Complete";
+                history = ["date":getDate(), "comments":historyComment]
+                data[destinationIndexPath.section][destinationIndexPath.row]?.data.insert(history, at: (data[destinationIndexPath.section][destinationIndexPath.row]?.data.endIndex)!)
+                
+                print(data[destinationIndexPath.section][destinationIndexPath.row]?.data ?? "Default value means its failed");
+            }
+        }
        // self.tableView.reloadData()
     }
     
@@ -72,7 +88,7 @@ class TaskTableViewController: UITableViewController {
             }
             else {
                 print("trying to save new item");
-                let newIndexPath = IndexPath(row: tasks.count, section: 0) // Gets the indexpath at the end of the tableView
+                let newIndexPath = IndexPath(row: data[0].count, section: 0) // Gets the indexpath at the end of the tableView
                 data[0].append(task); // new task goes to the top
                 tableView.insertRows(at: [newIndexPath], with: .automatic)//Inserts a new row to the end of the tableView
                 tableView.reloadSections(IndexSet(integersIn: 0...0), with: .none)
@@ -86,12 +102,13 @@ class TaskTableViewController: UITableViewController {
      This function is called in the ViewDidLoad() function
      */
     private func LoadDefaultTasks(){
-        let task1 = Task(taskName: "Task 1", dueDate: "11-Apr-2018", taskCompleted: false, history: ["date":"11-Apr-2018", "comments":"created"]);
-        let task2 = Task(taskName: "Task 2", dueDate: "12-Apr-2018", taskCompleted: false,history: ["date":"11-Apr-2018", "comments":"created"]);
-        data[0] += [task1,task2];
-        let task3 = Task(taskName: "Task 3", dueDate: "11-Apr-2018", taskCompleted: true,history: ["date":"11-Apr-2018", "comments":"created"]);
-        let task4 = Task(taskName: "Task 4", dueDate: "12-Apr-2018", taskCompleted: true,history: ["date":"11-Apr-2018", "comments":"created"]);
-        data[1] += [task3,task4]; // adds the default Task data to the tasks array
+        let task1 = Task(taskName: "Task 1", dueDate: "11-Apr-2018", taskCompleted: false, history: ["date":"12-Apr-2018", "comments":"created"]);
+        let task2 = Task(taskName: "Task 2", dueDate: "12-Apr-2018", taskCompleted: false,history: ["date":"16-Apr-2018", "comments":"created"]);
+        data[0] += [task1,task2]; // adds the tasks to the incomplete list
+        
+        let task3 = Task(taskName: "Task 3", dueDate: "13-Apr-2018", taskCompleted: true,history: ["date":"17-Apr-2018", "comments":"created"]);
+        let task4 = Task(taskName: "Task 4", dueDate: "14-Apr-2018", taskCompleted: true,history: ["date":"18-Apr-2018", "comments":"created"]);
+        data[1] += [task3,task4]; // adds the tasks to the completed list
     }
     
     
@@ -200,5 +217,12 @@ class TaskTableViewController: UITableViewController {
         }
     }
     
-
+    func getDate() -> String{
+        let date = Date()
+        let formatter = DateFormatter() // Sets the initial date to a nil string to prevent error
+        formatter.dateFormat = "dd.MM.yyyy"
+        let result = formatter.string(from: date)
+        
+        return result;
+    }
 }

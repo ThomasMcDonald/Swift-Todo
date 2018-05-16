@@ -21,7 +21,7 @@ class Task{
     var taskName: String;
     var dueDate: String;
     var taskCompleted: Bool;
-    var history: [String: String] = ["date":"", "comments":""];
+    var history: [String: String];
     var data:Array<Any>
     
     

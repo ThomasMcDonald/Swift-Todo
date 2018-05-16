@@ -20,7 +20,7 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     
     
     @IBOutlet weak var tableView: UITableView!
-    let section = ["History","Collaborators"];
+    let section = ["History"];
     var history: [String: String] = ["date":"", "comments":""];
     
 
@@ -35,7 +35,7 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
-        return  task!.data.count;
+        return  (task!.data[0] as AnyObject).count;
     }
     
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -46,9 +46,6 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
        
         cell.historyDate.text = task?.history["date"] // Assign currently editing taskName to the TaskName UItextfield
         cell.taskHistory.text = task?.history["comments"]
-        print(task?.data[indexPath.section][indexPath.row].date);
-        
-        
         return cell
     }
     
@@ -107,13 +104,8 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
             }
         
         
-        let cells = self.tableView.visibleCells as! Array<detailsTableViewCell>
-        
-        for cell in cells {
-            var dict  = ["date":cell.historyDate.text,"comments":cell.taskHistory.text] as [String : Any]
-            history = dict;
-        }
-        
+        _ = self.tableView.visibleCells as! Array<detailsTableViewCell>
+    
         print(history);
         
         
@@ -121,7 +113,7 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
         // If the Datepicker was hidden set the date to an initial value of ``
         //else assign the formattedDate to date
 
-        task = Task(taskName:name,dueDate:result,taskCompleted:false,history:history as! [String : String]);
+        task = Task(taskName:name,dueDate:result,taskCompleted:false, history: task!.data[0] as! [String : String]);
     }
     
   
