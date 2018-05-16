@@ -22,7 +22,7 @@ class TaskTableViewController: UITableViewController {
         super.viewDidLoad()
         self.navigationItem.leftBarButtonItem = self.editButtonItem // Enables Editing of the table contents
         
-        LoadDefaultTasks(); // Loads default data into the tasks array
+//        LoadDefaultTasks(); // Loads default data into the tasks array
 
      
     }
@@ -53,22 +53,21 @@ class TaskTableViewController: UITableViewController {
    
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         var historyComment = "Moved From Completed to Incomplete";
-        var history = ["date":"","comments":""];
         let movedObject = self.data[sourceIndexPath.section][sourceIndexPath.row]
             data[sourceIndexPath.section].remove(at:sourceIndexPath.row);
             data[destinationIndexPath.section].insert(movedObject, at: destinationIndexPath.row)
         
         if(sourceIndexPath.section != destinationIndexPath.section){
             if(destinationIndexPath.section == 0){
-                 history = ["date":getDate(), "comments":historyComment]
-                data[destinationIndexPath.section][destinationIndexPath.row]?.data.insert(history, at: (data[destinationIndexPath.section][destinationIndexPath.row]?.data.endIndex)!)
+                data[destinationIndexPath.section][destinationIndexPath.row]?.data.insert(historyStruct(date:getDate(),comment:historyComment), at: (data[destinationIndexPath.section][destinationIndexPath.row]?.data.startIndex)!)
+                
                 
                 print(data[destinationIndexPath.section][destinationIndexPath.row]?.data ?? "Default value means its failed");
             }
             else{
                 historyComment = "Moved From InComplete to Complete";
-                history = ["date":getDate(), "comments":historyComment]
-                data[destinationIndexPath.section][destinationIndexPath.row]?.data.insert(history, at: (data[destinationIndexPath.section][destinationIndexPath.row]?.data.endIndex)!)
+            
+                data[destinationIndexPath.section][destinationIndexPath.row]?.data.insert(historyStruct(date:getDate(),comment:historyComment), at: (data[destinationIndexPath.section][destinationIndexPath.row]?.data.startIndex)!)
                 
                 print(data[destinationIndexPath.section][destinationIndexPath.row]?.data ?? "Default value means its failed");
             }
@@ -100,17 +99,17 @@ class TaskTableViewController: UITableViewController {
     /**
      Loads default tasks into the task array
      This function is called in the ViewDidLoad() function
-     */
+ 
     private func LoadDefaultTasks(){
-        let task1 = Task(taskName: "Task 1", dueDate: "11-Apr-2018", taskCompleted: false, history: ["date":"12-Apr-2018", "comments":"created"]);
-        let task2 = Task(taskName: "Task 2", dueDate: "12-Apr-2018", taskCompleted: false,history: ["date":"16-Apr-2018", "comments":"created"]);
+        let task1 = Task(taskName: "Task 1", history: [["date":"12-Apr-2018", "comments":"created"]]);
+        let task2 = Task(taskName: "Task 2", history: [["date":"12-Apr-2018", "comments":"created"]]);
         data[0] += [task1,task2]; // adds the tasks to the incomplete list
         
-        let task3 = Task(taskName: "Task 3", dueDate: "13-Apr-2018", taskCompleted: true,history: ["date":"17-Apr-2018", "comments":"created"]);
-        let task4 = Task(taskName: "Task 4", dueDate: "14-Apr-2018", taskCompleted: true,history: ["date":"18-Apr-2018", "comments":"created"]);
+        let task3 = Task(taskName: "Task 3",history: [["date":"12-Apr-2018", "comments":"created"]]);
+        let task4 = Task(taskName: "Task 4", history: [["date":"12-Apr-2018", "comments":"created"]]);
         data[1] += [task3,task4]; // adds the tasks to the completed list
     }
-    
+    */
     
     /**
      Asks the data source for a cell to insert in a particular location of the table view.
@@ -132,9 +131,6 @@ class TaskTableViewController: UITableViewController {
     
         
         return cell
-        
-       
-        
     }
     
 
@@ -163,14 +159,14 @@ class TaskTableViewController: UITableViewController {
      - Parameters:
              tableView: A table-view object informing the delegate about the new row selection.
              indexPath: An index path locating the new selected row in tableView.
-     */
+ 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
                 cell.accessoryType = .checkmark // sets the checkmark accessory to the row
             tableView.deselectRow(at: indexPath, animated: true) //Deselects row to not interfere with the edit function
             }
     }
-
+*/
     
     
     /**
@@ -217,6 +213,10 @@ class TaskTableViewController: UITableViewController {
         }
     }
     
+    
+    /**
+     Returns the current date in a string format
+     */
     func getDate() -> String{
         let date = Date()
         let formatter = DateFormatter() // Sets the initial date to a nil string to prevent error

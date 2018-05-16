@@ -17,18 +17,21 @@ import UIKit
  - Throws: `nil` when the taskName is empty.
 
  */
+struct historyStruct {
+    let date: String
+    let comment: String
+}
+
 class Task{
     var taskName: String;
-    var dueDate: String;
-    var taskCompleted: Bool;
-    var history: [String: String];
+    var history = [historyStruct]();
     var data:Array<Any>
     
     
     
     
     
-    init?(taskName:String, dueDate:String, taskCompleted:Bool, history:[String:String]) {
+    init?(taskName:String, history:[historyStruct]) {
         
         
         // The taskName variable must not be empty
@@ -37,10 +40,8 @@ class Task{
         }
         
         self.taskName = taskName;
-        self.dueDate = dueDate;
-        self.taskCompleted = taskCompleted;
         self.history = history;
-        self.data = [self.history, [Collaborators?]()];
+        self.data = [self.history];
     }
     
     
@@ -51,12 +52,5 @@ class Task{
         return self.taskName;
     }
     
-    /**
-     Returns the dueDate, with type of string
-     
-     */
-    func getdueDate() -> String {
-        return self.dueDate;
-    }
     
 }

@@ -18,10 +18,9 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     @IBOutlet weak var TaskName: UITextField! // This outlet belongs to the TaskName UItextfield
     @IBOutlet weak var SaveButton: UIBarButtonItem! // This outlet belongs to the SaveButton UIBarButtonItem
     
-    
     @IBOutlet weak var tableView: UITableView!
     let section = ["History"];
-    var history: [String: String] = ["date":"", "comments":""];
+    var history: [historyStruct] = []
     
 
     
@@ -35,7 +34,10 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
-        return  (task!.data[0] as AnyObject).count;
+        if let task = task{
+            return (task.data[0] as AnyObject).count;
+        }
+        else{return 0}
     }
     
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -43,9 +45,14 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
         let cellIdentifier = "detailsTableViewCell"
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? detailsTableViewCell
             else{fatalError("Dequeued cell reallocation didnt work")}
-       
-        cell.historyDate.text = task?.history["date"] // Assign currently editing taskName to the TaskName UItextfield
-        cell.taskHistory.text = task?.history["comments"]
+        
+        print()
+        
+        let historyDate = (task?.data[indexPath.section] as! [historyStruct])[indexPath.row].date;
+        let taskcomments = (task?.data[indexPath.section] as! [historyStruct])[indexPath.row].comment;
+        cell.historyDate.text = (historyDate) // Assign currently editing taskName to the TaskName UItextfield
+        cell.taskHistory.text = (taskcomments) 
+
         return cell
     }
     
@@ -90,11 +97,6 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
             super.prepare(for: segue, sender: sender);
         //These handle the date Picker value and format, converts the datepicker value to a string
         //to view in the table row
-        let date = Date()
-        let formatter = DateFormatter() // Sets the initial date to a nil string to prevent error
-        formatter.dateFormat = "dd.MM.yyyy"
-        let result = formatter.string(from: date)
-        //////
         
         //Checks for button clicks, if it was the save button continue, continue.
         // Else it assumes it was the cancel button
@@ -102,18 +104,13 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
                 os_log("Save button wasnt pressed, cancelling item creation", log: OSLog.default, type: .debug)
                 return
             }
-        
-        
-        _ = self.tableView.visibleCells as! Array<detailsTableViewCell>
-    
-        print(history);
-        
-        
+
         let name = TaskName.text ?? "" // make sure TaskName is never Nil
         // If the Datepicker was hidden set the date to an initial value of ``
         //else assign the formattedDate to date
-
-        task = Task(taskName:name,dueDate:result,taskCompleted:false, history: task!.data[0] as! [String : String]);
+        history.append(historyStruct(date:"12-12-2012",comment:"Created"));
+        history.append(historyStruct(date:"12-12-2012",comment:"Created2"));
+        task = Task(taskName:name, history: history);
     }
     
   
@@ -128,6 +125,17 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
         SaveButton.isEnabled = !text.isEmpty;
     }
     
+    /**
+     Returns the current date in a string format
+     */
+    func getDate() -> String{
+        let date = Date()
+        let formatter = DateFormatter() // Sets the initial date to a nil string to prevent error
+        formatter.dateFormat = "dd-MM-yyyy"
+        let result = formatter.string(from: date)
+        
+        return result;
+    }
 
    
 }
