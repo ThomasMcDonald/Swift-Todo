@@ -20,7 +20,7 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     
     @IBOutlet weak var tableView: UITableView!
     let section = ["History"];
-    var history: [historyStruct] = []
+    var hasBeenEdited = false;
     
 
     
@@ -35,7 +35,8 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int
     {
         if let task = task{
-            return (task.data[0] as AnyObject).count;
+            hasBeenEdited = true;
+            return (task.history).count;
         }
         else{return 0}
     }
@@ -46,17 +47,16 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? detailsTableViewCell
             else{fatalError("Dequeued cell reallocation didnt work")}
         
-        print()
-        
-        let historyDate = (task?.data[indexPath.section] as! [historyStruct])[indexPath.row].date;
-        let taskcomments = (task?.data[indexPath.section] as! [historyStruct])[indexPath.row].comment;
-        cell.historyDate.text = (historyDate) // Assign currently editing taskName to the TaskName UItextfield
-        cell.taskHistory.text = (taskcomments) 
-
-        return cell
+        if(indexPath.section == 0){
+            let historyDate = (task?.history[indexPath.row])?.date;
+            let taskcomments = (task?.history[indexPath.row])?.comment;
+            cell.historyDate.text = historyDate // Assign currently editing taskName to the TaskName UItextfield
+            cell.taskHistory.text = taskcomments
+        }
+        return cell;
     }
-    
-    
+ 
+
    
 
  
@@ -95,11 +95,7 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
     ///it formats the the date into a string.
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
             super.prepare(for: segue, sender: sender);
-        //These handle the date Picker value and format, converts the datepicker value to a string
-        //to view in the table row
         
-        //Checks for button clicks, if it was the save button continue, continue.
-        // Else it assumes it was the cancel button
         guard let button = sender as? UIBarButtonItem, button === SaveButton else{
                 os_log("Save button wasnt pressed, cancelling item creation", log: OSLog.default, type: .debug)
                 return
@@ -108,9 +104,19 @@ class TaskViewController: UIViewController, UITextFieldDelegate,UITableViewDataS
         let name = TaskName.text ?? "" // make sure TaskName is never Nil
         // If the Datepicker was hidden set the date to an initial value of ``
         //else assign the formattedDate to date
-        history.append(historyStruct(date:"12-12-2012",comment:"Created"));
-        history.append(historyStruct(date:"12-12-2012",comment:"Created2"));
-        task = Task(taskName:name, history: history);
+        
+        if(task?.history == nil){
+            task = Task(taskName:name, history: [historyStruct(date:getDate(),comment:"Created")]);
+    }
+    else{
+            if(task?.taskName != name){
+                task?.history.insert((historyStruct(date:getDate(),comment:"Edited Title")), at: 0);
+            }
+            
+            task = Task(taskName:name, history: (task?.history)!);
+            
+        }
+        
     }
     
   

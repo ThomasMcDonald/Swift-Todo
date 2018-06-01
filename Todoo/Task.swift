@@ -18,8 +18,8 @@ import UIKit
 
  */
 struct historyStruct {
-    let date: String
-    let comment: String
+    var date: String
+    var comment: String
 }
 
 class Task{
@@ -41,7 +41,7 @@ class Task{
         
         self.taskName = taskName;
         self.history = history;
-        self.data = [self.history];
+        self.data = [self.history, [Collaborators]()];
     }
     
     
@@ -51,6 +51,5 @@ class Task{
     func getTaskName() -> String {
         return self.taskName;
     }
-    
     
 }

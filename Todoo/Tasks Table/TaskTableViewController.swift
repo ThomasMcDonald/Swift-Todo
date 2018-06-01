@@ -54,27 +54,27 @@ class TaskTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         var historyComment = "Moved From Completed to Incomplete";
         let movedObject = self.data[sourceIndexPath.section][sourceIndexPath.row]
+        var historyArray = movedObject?.history;
             data[sourceIndexPath.section].remove(at:sourceIndexPath.row);
             data[destinationIndexPath.section].insert(movedObject, at: destinationIndexPath.row)
         
         if(sourceIndexPath.section != destinationIndexPath.section){
             if(destinationIndexPath.section == 0){
-                data[destinationIndexPath.section][destinationIndexPath.row]?.data.insert(historyStruct(date:getDate(),comment:historyComment), at: (data[destinationIndexPath.section][destinationIndexPath.row]?.data.startIndex)!)
-                
-                
-                print(data[destinationIndexPath.section][destinationIndexPath.row]?.data ?? "Default value means its failed");
+                 print("Complete");
+                historyArray?.insert((historyStruct(date:getDate(),comment:historyComment)), at: 0);
+                movedObject?.history = historyArray!;
             }
             else{
                 historyComment = "Moved From InComplete to Complete";
-            
-                data[destinationIndexPath.section][destinationIndexPath.row]?.data.insert(historyStruct(date:getDate(),comment:historyComment), at: (data[destinationIndexPath.section][destinationIndexPath.row]?.data.startIndex)!)
-                
-                print(data[destinationIndexPath.section][destinationIndexPath.row]?.data ?? "Default value means its failed");
+                print("Incomplete");
+                historyArray?.insert((historyStruct(date:getDate(),comment:historyComment)), at: 0);
+                movedObject?.history = historyArray!;
             }
         }
-       // self.tableView.reloadData()
+        self.tableView.reloadData()
     }
-    
+
+
     
     @IBAction func unwindToTaskList(sender: UIStoryboardSegue){
         if let sourceViewController = sender.source as? TaskViewController, let task = sourceViewController.task {
